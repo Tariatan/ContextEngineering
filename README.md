@@ -27,3 +27,19 @@ Then reference the agent from that project's own `AGENTS.md` / `CLAUDE.md`, e.g.
 ```
 Code review is performed by the `Reviewer` sub-agent defined in `.agents/context-engineering/reviewer.agent.md`.
 ```
+
+### Keeping the submodule in sync
+
+After cloning the consuming project (or pulling a commit that adds this submodule for the first time), populate it with:
+
+```
+git submodule update --init --recursive
+```
+
+A plain `git pull` afterwards does **not** automatically move the submodule forward, even if a later commit bumps its pointer to a newer commit here — you'd need to run `git submodule update --recursive` again whenever that happens. To avoid remembering this, set it once per machine:
+
+```
+git config --global submodule.recurse true
+```
+
+This makes `git pull` / `git checkout` keep submodules in sync automatically (the initial `--init` on a fresh clone is still required, since this setting doesn't cover that one-time step).

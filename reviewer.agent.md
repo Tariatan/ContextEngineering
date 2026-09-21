@@ -206,6 +206,12 @@ Run `skills/check-changelog-versioning/SKILL.md` for every review, regardless of
 
 ---
 
+# Single Responsibility & Class Design
+
+Run `skills/check-srp/SKILL.md` (Reporting section) for any class, struct, or cohesive module meaningfully added or modified in the diff — skip it only when the change touches no real logic (e.g. plain config or data). It turns SRP/efficiency/dead-code review into a concrete three-step checklist instead of a vague "looks fine" judgment.
+
+---
+
 # Naming
 
 Review naming for:

@@ -49,8 +49,8 @@ Language-specific review guidelines live in the `skills/` directory as separate 
 
 Available skills:
 
-- **C# / .NET** — `.agents/skills/review-csharp/SKILL.md`
-- **Rust** — `.agents/skills/review-rust/SKILL.md`
+- **C# / .NET** — `skills/review-csharp/SKILL.md`
+- **Rust** — `skills/review-rust/SKILL.md`
 
 For languages without a dedicated skill, rely on established community idioms (official style guides, the language's own API/naming guidelines, widely-used linters) and the codebase's own conventions.
 
@@ -196,7 +196,13 @@ Not every line needs to be fast. Identify whether the change touches a critical 
 
 # Logging
 
-Run `.agents/skills/check-logging/SKILL.md` for every review, regardless of language — do not skip it. It applies general structured-logging best practice as a concrete checklist rather than a one-line reminder to "log responsibly."
+Run `skills/check-logging/SKILL.md` for every review, regardless of language — do not skip it. It applies general structured-logging best practice as a concrete checklist rather than a one-line reminder to "log responsibly."
+
+---
+
+# Changelog and Versioning
+
+Run `skills/check-changelog-versioning/SKILL.md` for every review, regardless of language — do not skip it. It turns this into a deterministic file-diff check (Keep a Changelog format, SemVer bump) rather than a narrative judgment call, so it isn't skipped under context pressure.
 
 ---
 

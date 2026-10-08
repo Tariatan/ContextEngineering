@@ -1,6 +1,6 @@
 ---
 name: edit-memory-file
-description: Procedure for creating or editing MEMORY.md and its topic files - index format, one-fact-per-file frontmatter, the 200-line/25KB load limit, what to save or skip, and pruning stale entries. Use when adding, changing, or cleaning up an agent memory file, either the auto-memory index under ~/.claude/projects/<project>/memory/ or a repo-root MEMORY.md of durable project context.
+description: Create or tidy MEMORY.md and its topic files, retaining useful counterintuitive findings, decisions with alternatives, preserved workarounds, and unfinished tasks. Use for memory edits and pruning; exclude release history and facts already available in code or maintained documentation.
 ---
 
 # Edit Memory File
@@ -11,7 +11,7 @@ Two kinds of file share the name `MEMORY.md`. Identify which one you are editing
 
 ## Sources behind these rules
 
-If a vendor doc changes, the vendor doc wins.
+The user's memory criteria take precedence over these background references. Vendor documentation informs storage mechanics; it does not require retaining content that fails the admission criteria below.
 
 - Claude Code memory ([code.claude.com/docs/en/memory](https://code.claude.com/docs/en/memory)): `MEMORY.md` is an index, one line per memory, with detail in topic files. Only the first 200 lines or 25KB load at session start; topic files load on demand. Four memory types: `user`, `feedback`, `project`, `reference`. Skip anything derivable from the code or already in CLAUDE.md. Keep instruction files under 200 lines and make entries concrete enough to verify.
 - Anthropic memory tool ([platform.claude.com/docs/en/agents-and-tools/tool-use/memory-tool](https://platform.claude.com/docs/en/agents-and-tools/tool-use/memory-tool)): keep the directory current, coherent, and organized; rename or delete obsolete files; create new files only when necessary; cap file sizes; expire files nobody reads; never store sensitive data; record progress as if interruption can happen at any moment.
@@ -23,7 +23,7 @@ If a vendor doc changes, the vendor doc wins.
 ## Step 1 - Identify the file kind
 
 - **Auto-memory index**: `~/.claude/projects/<project>/memory/MEMORY.md`. Loaded into every session. Contains only pointers. Content lives in sibling topic files.
-- **Repo-root MEMORY.md**: checked-in durable project context (ownership, incidents, integration facts), the companion of the repo's CLAUDE.md. Contains the facts themselves, grouped under headings. CLAUDE.md holds the rules; MEMORY.md holds what the team learned.
+- **Repo-root MEMORY.md**: durable project lessons and unfinished work, alongside the repo's instruction files. Contains the facts themselves, grouped under headings. CLAUDE.md holds the rules; MEMORY.md holds what the team learned.
 
 If the user's request fits neither (for example a rule an agent must always follow), put it in CLAUDE.md instead and say so.
 
@@ -35,21 +35,25 @@ If the user's request fits neither (for example a rule an agent must always foll
 
 ## Step 3 - Decide whether the fact belongs
 
-Save when a future session would otherwise repeat a mistake or miss a constraint:
+Save only information whose non-obvious value would otherwise be lost, within these four categories:
 
-- A correction from the user, or an approach the user confirmed (`feedback`).
-- The user's role, expertise, or working preferences (`user`).
-- Ongoing work, deadlines, decisions, or incident root causes that git history does not show (`project`).
-- A pointer to an external system such as a tracker, dashboard, or wiki page (`reference`).
+- **Useful counterintuitive findings:** an approach or result proved useful despite being controversial, apparently contradictory, or contrary to the expected rule. Record the evidence and the conditions under which it worked.
+- **Decisions over alternatives:** a choice was made over a concrete counterpart. Record the chosen option, the rejected alternative, and the reason or tradeoff that is not already explained elsewhere.
+- **Preserved workarounds:** an unresolved limitation requires a workaround future sessions must retain. Record the trigger, the workaround, why it is still needed, and its removal condition when known.
+- **Unfinished tasks:** work was left for a future session. Record the unresolved part, blocker or constraint, and next concrete step. Do not duplicate a maintained plan or issue tracker.
 
-Skip when:
+For every candidate, ask: would this entry change a future session's decision, preserve a necessary workaround, or enable unfinished work to resume? If it only recounts what happened, omit it.
 
-- The code, the git log, or CLAUDE.md already records it. File paths, architecture, and past fixes belong here only when the non-obvious reason behind them is the point.
-- It only matters inside the current conversation.
-- It contains a secret, token, password, or personal data.
-- It is a guess. Record only what was observed or stated, with the source.
+Skip:
 
-When asked to remember something that fails this test, ask what was non-obvious about it and save that.
+- Release narratives, completed-task reports, test-count histories, benchmark logs, and routine fixes already recorded in CHANGELOG.md or git history.
+- Facts visible in code, architecture descriptions, path inventories, setup instructions, or rules already maintained in README, AGENTS.md, CLAUDE.md, a design document, or a plan.
+- Generic user profiles, preferences, and reference links that do not support one of the four categories above.
+- Transcripts, temporary conversation context, guesses, secrets, credentials, or personal data.
+
+A code or changelog reference can support a qualifying entry; it does not justify copying that source into memory. Save the non-obvious lesson or rationale, not the implementation summary. If no entry qualifies, leave memory small or empty rather than inventing content.
+
+When tidying, delete redundant or obsolete material directly. Do not relocate it to linked history files, archives, or topic files merely to preserve volume. Do not recreate memory folders the user deliberately removed. Preserve a qualifying lesson when its useful rationale is absent from maintained sources; briefly report material pruning in the hand-back.
 
 ## Step 4 - Write one fact per topic file (auto-memory index)
 
@@ -91,18 +95,18 @@ Add or edit exactly one line per memory:
 
 ## Step 6 - Repo-root MEMORY.md structure
 
-Use plain headings for the sections that apply and omit the rest. Typical sections: ownership and contacts, integration facts, incidents and decisions, open questions.
+Use plain headings for the sections that apply and omit the rest. Suitable sections: counterintuitive findings, decisions and alternatives, preserved workarounds, unfinished tasks. Create only sections with qualifying entries.
 
 - Cite evidence for each non-obvious claim: a file path, PR number, work item ID, or quoted decision.
-- State an incident's root cause and how the fix was validated.
+- Include incident evidence only when it explains a qualifying lesson or a workaround that still matters. Routine completed fixes belong in the changelog.
 - Date-stamp facts that can expire (`as of 2026-10-08`).
 - Keep entries as bullets or short paragraphs under a heading. Do not restate what README or CLAUDE.md already say.
-- Never silently drop an incident or decision record. Remove it only when it is demonstrably wrong, and say so in the hand-back summary.
+- Prune entries that no longer meet the admission criteria, even when historically correct. Do not preserve redundant incident or decision records in archives.
 
 ## Step 7 - Verify and prune
 
 1. Re-check every file, function, flag, or path named in the entries you touched and confirm it still exists.
-2. Delete or correct entries that turned out to be wrong. Leave no tombstone line.
+2. Delete or correct wrong, redundant, superseded, or no-longer-useful entries. Remove completed tasks unless they yielded a qualifying lesson or preserved workaround. Leave no tombstone line.
 3. Resolve contradictions between entries or with CLAUDE.md. Keep the newer, evidenced one.
 4. Re-run `wc -l` and `wc -c` on the index and confirm it is under both limits.
 5. Confirm every index line points at an existing file and every topic file has an index line.

@@ -1,119 +1,52 @@
 ---
 name: edit-memory-file
-description: Create or tidy MEMORY.md and its topic files, retaining useful counterintuitive findings, decisions with alternatives, preserved workarounds, and unfinished tasks. Use for memory edits and pruning; exclude release history and facts already available in code or maintained documentation.
+description: Creates, edits, and prunes MEMORY.md and its topic or archive files using tiered memory (active, archive, retired), promotion to instruction files, consolidation, scope splitting, and expiry annotations. Use when the user says "remember this", "add to memory", "update MEMORY.md", "clean up memory", "prune memory files", "memory is too long", or "promote this memory to the instruction file". Do not use to generate a repo's instruction and memory files from scratch, or for rules that apply to every task (those belong in the instruction file, such as AGENTS.md or CLAUDE.md).
+metadata:
+  version: 2.0.0
+  status: active
+  last-reviewed: 2026-10-15
+  risk: low
 ---
 
 # Edit Memory File
 
-Procedure for any write to a memory file. It exists because memory edits drift in predictable ways: the index grows past its load limit, entries duplicate each other, derivable facts pile up, and stale claims survive. The steps below keep each edit small and verifiable.
+## Critical
 
-Two kinds of file share the name `MEMORY.md`. Identify which one you are editing in Step 1, because the structure differs.
+- NEVER commit or push memory files without explicit user confirmation. A local `git tag` snapshot is allowed.
+- NEVER write a consolidated or promoted entry before showing the user the proposed text and getting a go-ahead. Automatic summaries drop nuance.
+- NEVER store secrets, credentials, personal data, transcripts, or guesses.
+- Preserve the file's original EOF newline style.
 
-## Sources behind these rules
+## Scope
 
-The user's memory criteria take precedence over these background references. Vendor documentation informs storage mechanics; it does not require retaining content that fails the admission criteria below.
+- Use for: adding, updating, consolidating, splitting, promoting, archiving, or removing memory entries; the periodic memory review.
+- Not for: generating a repo's instruction and memory files from scratch; settled rules (the instruction file); hooks.
+- Prerequisites: Python 3 (`python3`, `python` or `py -3` on Windows) and `git` on PATH; verify with `python3 --version`. If absent, stop and report.
 
-- Claude Code memory ([code.claude.com/docs/en/memory](https://code.claude.com/docs/en/memory)): `MEMORY.md` is an index, one line per memory, with detail in topic files. Only the first 200 lines or 25KB load at session start; topic files load on demand. Four memory types: `user`, `feedback`, `project`, `reference`. Skip anything derivable from the code or already in CLAUDE.md. Keep instruction files under 200 lines and make entries concrete enough to verify.
-- Anthropic memory tool ([platform.claude.com/docs/en/agents-and-tools/tool-use/memory-tool](https://platform.claude.com/docs/en/agents-and-tools/tool-use/memory-tool)): keep the directory current, coherent, and organized; rename or delete obsolete files; create new files only when necessary; cap file sizes; expire files nobody reads; never store sensitive data; record progress as if interruption can happen at any moment.
-- Anthropic context engineering ([anthropic.com/engineering/effective-context-engineering-for-ai-agents](https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents)): structured notes outside the context window hold decisions, unresolved issues, and progress. Prune redundant material aggressively and keep subtle context whose value may appear later.
-- OpenAI AGENTS.md and Codex ([agents.md](https://agents.md), Codex AGENTS.md guide): plain Markdown with no required fields. The nearest file wins, files layer from broad to specific, and Codex stops reading at 32 KiB (`project_doc_max_bytes`). Put specialized rules close to the code they govern.
-- Letta memory blocks ([docs.letta.com/guides/agents/memory-blocks](https://docs.letta.com/guides/agents/memory-blocks)): every block has a label, a description, a value, and a size limit. The description is what tells the agent how to read and write the block, so write it for that reader.
-- LangGraph memory concepts ([docs.langchain.com/oss/python/concepts/memory](https://docs.langchain.com/oss/python/concepts/memory)): a single growing profile document gets error-prone, while a collection of narrow documents is easier to extend and gives better recall. Collections need deliberate update and delete discipline.
+## Instructions
 
-## Step 1 - Identify the file kind
+1. **IDENTIFY**: Auto-memory index is `MEMORY.md` in the agent's own memory directory (Claude Code: `~/.claude/projects/PROJECT/memory/`); it holds pointer lines only, with facts in topic files and a 200 line or 25KB load limit. Repo memory is the repo-root `MEMORY.md` or `.agents/memory.md` (facts inline, active tier at most 100 lines). Agents without auto-memory use the repo kind only. Expected: one of the two kinds. A rule that applies to every task goes to the instruction file (AGENTS.md, CLAUDE.md or equivalent) instead; say so and stop.
+2. **BASELINE**: Read the whole file and every topic file that overlaps the new fact. Run `python3 -I scripts/check-memory.py FILE` (add `200` as the second argument for an index). Expected: line and byte counts plus a problem list, recorded as the pre-edit state.
+3. **ADMIT**: Keep a candidate only if it changes a future decision, preserves a workaround, or lets unfinished work resume. The four kinds: counterintuitive finding with its evidence; decision with the rejected alternative and the reason; workaround with trigger and removal condition; unfinished task with blocker and next step. Skip release history, facts visible in code, git, README or the instruction file, and one-off session context. Auto-memory also accepts `user`, `feedback` and `reference` entries that record how the user works. Update an existing entry before adding one. Expected: a keep or skip verdict per candidate.
+4. **WRITE**: Repo memory takes one bullet `- YYYY-MM: fact and why`, absolute dates only, plus `[EXPIRES: date]`, `[REVIEW: date]`, `[TRIAL: start - end]` or `[stable]` as in `references/memory-strategies.md` (Strategy 5). Auto-memory takes one fact per topic file and one index line, as in `references/auto-memory-format.md`. Expected: no new problem in the next check run.
+5. **PROMOTE**: An entry that reads as a rule (same correction 3+ times, caught in review, unchanged for two quarters, or a costly miss) moves to the instruction file with more specific wording. Show the draft, then add it there and delete it from memory in the same change. Expected: the rule exists in exactly one place.
+6. **TIER**: When the check reports OVER-LINES or entries are older than 6 months, read `references/memory-strategies.md` (Strategies 1, 3, 4). Run `git tag memory-snapshot-YYYY-QN` first. Move 6-18 month entries not needed this week to `memory-archive.md` (linked from the top of the active file). Consolidate 3+ entries on one topic into a current-state entry that keeps the why. Split by topic when the file covers more than 3. Remove superseded entries older than 18 months (git history keeps them). Skip `[stable]` entries. Expected: active file within budget.
+7. **VERIFY**: Re-run `python3 -I scripts/check-memory.py FILE`. Expected: exit 0. Confirm every file, function, flag and path named in touched entries exists. Resolve contradictions with the instruction file by keeping the newer evidenced statement. After a consolidation, answer one task question that depends on it from the new text alone.
+8. **REPORT**: Hand back the added, promoted, archived and removed entries with a one-line reason each, and the pre- and post-edit line counts. Do not commit.
 
-- **Auto-memory index**: `~/.claude/projects/<project>/memory/MEMORY.md`. Loaded into every session. Contains only pointers. Content lives in sibling topic files.
-- **Repo-root MEMORY.md**: durable project lessons and unfinished work, alongside the repo's instruction files. Contains the facts themselves, grouped under headings. CLAUDE.md holds the rules; MEMORY.md holds what the team learned.
+## Examples
 
-If the user's request fits neither (for example a rule an agent must always follow), put it in CLAUDE.md instead and say so.
+- "Remember we picked Postgres over Mongo for audit logs" → Steps 1-4. Result: one dated bullet naming the rejected option and the reason.
+- "MEMORY.md is 140 lines, clean it up" → Steps 2, 6, 7. Result: snapshot tag, archive file, active file under 100 lines.
+- "We always use System.Text.Json now, promote that" → Step 5. Result: rule added to the instruction file, entry deleted from memory.
 
-## Step 2 - Read before writing
+## Troubleshooting
 
-1. Read the whole `MEMORY.md`. For an index, list the directory and read the topic files whose hooks overlap the new fact.
-2. Run `wc -l` and `wc -c` on the index. Note how close it is to 200 lines or 25KB.
-3. Look for an existing entry that already covers the fact. Update that entry; create a new one only when nothing fits.
+- **EXPIRED line reported** - the annotation date has passed. Remove the entry, or update it and set a new date.
+- **ORPHAN or BROKEN-LINK reported** - an index line and a file name disagree. Fix both in the same edit.
 
-## Step 3 - Decide whether the fact belongs
+## References
 
-Save only information whose non-obvious value would otherwise be lost, within these four categories:
-
-- **Useful counterintuitive findings:** an approach or result proved useful despite being controversial, apparently contradictory, or contrary to the expected rule. Record the evidence and the conditions under which it worked.
-- **Decisions over alternatives:** a choice was made over a concrete counterpart. Record the chosen option, the rejected alternative, and the reason or tradeoff that is not already explained elsewhere.
-- **Preserved workarounds:** an unresolved limitation requires a workaround future sessions must retain. Record the trigger, the workaround, why it is still needed, and its removal condition when known.
-- **Unfinished tasks:** work was left for a future session. Record the unresolved part, blocker or constraint, and next concrete step. Do not duplicate a maintained plan or issue tracker.
-
-For every candidate, ask: would this entry change a future session's decision, preserve a necessary workaround, or enable unfinished work to resume? If it only recounts what happened, omit it.
-
-Skip:
-
-- Release narratives, completed-task reports, test-count histories, benchmark logs, and routine fixes already recorded in CHANGELOG.md or git history.
-- Facts visible in code, architecture descriptions, path inventories, setup instructions, or rules already maintained in README, AGENTS.md, CLAUDE.md, a design document, or a plan.
-- Generic user profiles, preferences, and reference links that do not support one of the four categories above.
-- Transcripts, temporary conversation context, guesses, secrets, credentials, or personal data.
-
-A code or changelog reference can support a qualifying entry; it does not justify copying that source into memory. Save the non-obvious lesson or rationale, not the implementation summary. If no entry qualifies, leave memory small or empty rather than inventing content.
-
-When tidying, delete redundant or obsolete material directly. Do not relocate it to linked history files, archives, or topic files merely to preserve volume. Do not recreate memory folders the user deliberately removed. Preserve a qualifying lesson when its useful rationale is absent from maintained sources; briefly report material pruning in the hand-back.
-
-## Step 4 - Write one fact per topic file (auto-memory index)
-
-File name: short snake_case or kebab-case slug, prefixed by type when helpful (`feedback_testing.md`).
-
-```markdown
----
-name: <short-kebab-case-slug>
-description: <one line used to decide relevance during recall>
-metadata:
-  type: user | feedback | project | reference
----
-
-<the fact>
-
-**Why:** <the reason or incident behind it>
-**How to apply:** <when and where this changes behavior>
-```
-
-- `Why` and `How to apply` are required for `feedback` and `project`; optional for `user` and `reference`.
-- Convert relative dates ("next Thursday") to absolute dates.
-- Link related memories with `[[other-name]]` using that file's `name:` slug.
-- Write the `description` for a reader deciding whether to open the file, in the way Letta treats a block description.
-- Keep each file short. Split a file once it covers two independent facts.
-
-## Step 5 - Update the index
-
-Add or edit exactly one line per memory:
-
-```markdown
-- [Title](file.md) - one-line hook
-```
-
-- No frontmatter and no memory content in `MEMORY.md`.
-- Keep each line under about 150 characters. The hook should tell a future session whether to open the file.
-- Group related lines under short headings once the index passes roughly 40 lines.
-- Stay under 200 lines and 25KB. Beyond that point the tail silently stops loading. Near the limit, merge overlapping entries and delete stale ones before adding.
-- When a file is renamed or deleted, fix its index line and every `[[link]]` pointing at it in the same edit.
-
-## Step 6 - Repo-root MEMORY.md structure
-
-Use plain headings for the sections that apply and omit the rest. Suitable sections: counterintuitive findings, decisions and alternatives, preserved workarounds, unfinished tasks. Create only sections with qualifying entries.
-
-- Cite evidence for each non-obvious claim: a file path, PR number, work item ID, or quoted decision.
-- Include incident evidence only when it explains a qualifying lesson or a workaround that still matters. Routine completed fixes belong in the changelog.
-- Date-stamp facts that can expire (`as of 2026-10-08`).
-- Keep entries as bullets or short paragraphs under a heading. Do not restate what README or CLAUDE.md already say.
-- Prune entries that no longer meet the admission criteria, even when historically correct. Do not preserve redundant incident or decision records in archives.
-
-## Step 7 - Verify and prune
-
-1. Re-check every file, function, flag, or path named in the entries you touched and confirm it still exists.
-2. Delete or correct wrong, redundant, superseded, or no-longer-useful entries. Remove completed tasks unless they yielded a qualifying lesson or preserved workaround. Leave no tombstone line.
-3. Resolve contradictions between entries or with CLAUDE.md. Keep the newer, evidenced one.
-4. Re-run `wc -l` and `wc -c` on the index and confirm it is under both limits.
-5. Confirm every index line points at an existing file and every topic file has an index line.
-6. Preserve the file's original EOF newline style.
-
-## Notes
-
-- A memory is background context for future sessions and reflects what was true when written. Verify before acting on one.
-- Do not commit or push memory files that live in a repo without explicit user confirmation.
-- Hooks, not memory, enforce behavior that must run on every action.
+- `references/memory-strategies.md` - read in Step 4 for annotations and in Steps 5-6 for promotion, tiering, consolidation and splitting.
+- `references/auto-memory-format.md` - read in Step 4 when editing an auto-memory index or topic file.
+- `scripts/check-memory.py` - run in Steps 2 and 7 (use `python` or `py -3` where `python3` is missing); argument 1 is the memory file, optional argument 2 the line limit (default 100).

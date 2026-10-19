@@ -5,7 +5,7 @@ How to write an agent skill so that it triggers when it should, stays quiet when
 Companion files:
 
 - [skill-template.md](templates/skill-template.md) - copy this to start a new skill.
-- [`agent-skill-review`](../skills/agent-skill-review/SKILL.md) - a real skill in this repository, used as the worked example (§12) and as the checker for the skills you write.
+- [`agent-skill-review`](../.agents/skills/agent-skill-review/SKILL.md) - a real skill in this repository, used as the worked example (§12) and as the checker for the skills you write.
 
 **Contents.** §1-§6 are what you need to write a skill; §7-§11 are what you need to ship one.
 
@@ -56,7 +56,7 @@ A skill is one of several context primitives and it is not the default. Pick the
 
 | Use | When | Why |
 |---|---|---|
-| **Instruction file** (`AGENTS.md`, `.github/copilot-instructions.md`, `CLAUDE.md`) | Knowledge about how to work *inside* a repository: code style, build command, branch naming, threading rules | Always loaded for the matching scope. No triggering risk. No maintenance surface. |
+| **Instruction file** (`AGENTS.md`, `.github/copilot-instructions.md`) | Knowledge about how to work *inside* a repository: code style, build command, branch naming, threading rules | Always loaded for the matching scope. No triggering risk. No maintenance surface. |
 | **Skill** | How an *external consumer* uses a shared library, or a detailed conditional procedure the agent should load *only when relevant* | Cross-cutting; activates when the agent meets the library or pattern in use. Progressive disclosure earns its keep. |
 | **Agent configuration** | The work needs specialist judgement, a different persona, model or tool allow-list | Skills cannot change the agent's identity |
 | **Prompt file / slash command** | A repeatable multi-step process the human invokes by name every time | No triggering logic needed at all |
@@ -228,7 +228,7 @@ Three carve-outs:
 
 - The Copilot **code review** harness does not read `.agents/skills/`. Publish skill folder links under `.github/skills/`.
 - For Copilot **code review** the skill folder has to be named something descriptive (e.g. `code-review`) so that it can be distinguished from other skills.
-- Claude Code does not discover `.agents/skills/` natively. Bridge it: symlink `.claude/skills/` to `.agents/skills/`, or reference the skill explicitly from `CLAUDE.md`.
+- Claude Code does not discover `.agents/skills/` natively. Bridge it: symlink `.claude/skills/` to `.agents/skills/`.
 
 Never hand-maintain a second copy for any of these. Duplicated content across tool directories drifts, so link it or reference it. A skill is portable content, so write it **once** under `.agents/skills/` and treat everything else in the tree as thin bridging:
 
@@ -239,7 +239,6 @@ my-repo/
 │   └── skills/
 │       └── measurement-uncertainty/
 │           └── SKILL.md           <- the skill, written once, here
-├── CLAUDE.md                      <- imports @AGENTS.md; references the skill explicitly
 ├── .claude/
 │   └── skills/                    <- link to ../.agents/skills
 ├── .github/
@@ -248,7 +247,7 @@ my-repo/
 └── src/
 ```
 
-This repository is a source library of skills and agents, so it keeps them at the top level (`skills/`, `*.agent.md`) and has no bridging of its own. Consuming repositories copy or link them into the layout above.
+This repository is a source library of skills and agents, so it keeps them under `.agents/` (`.agents/skills/`, `.agents/<agent-name>/<agent-name>.agent.md`) and has no bridging of its own. Consuming repositories copy or link them into the layout above.
 
 ### Getting a skill into a repository
 
@@ -422,7 +421,7 @@ Too much always-on context. Audit the installed catalogue and disable what the c
 
 ## 12. Worked example
 
-Read [`agent-skill-review`](../skills/agent-skill-review/SKILL.md), a real skill that lives in this repository, instead of a fabricated sample. Being a review skill, it is also the fastest way to see this guide's rules applied to a skill by a skill.
+Read [`agent-skill-review`](../.agents/skills/agent-skill-review/SKILL.md), a real skill that lives in this repository, instead of a fabricated sample. Being a review skill, it is also the fastest way to see this guide's rules applied to a skill by a skill.
 
 | Guide section | What to look for |
 |---|---|
@@ -450,6 +449,6 @@ description: Our C# coding standards, nullable enabled, file-scoped namespaces,
 
 Why it fails: it applies to *every* C# task in the repo, so it must never be conditionally loaded. As a skill it will sometimes not trigger, and the agent will silently write non-conforming code. There is no signal that it failed.
 
-Correct home: repository custom instructions (`.github/copilot-instructions.md` / `AGENTS.md` / `CLAUDE.md`), which are always loaded.
+Correct home: repository custom instructions (`.github/copilot-instructions.md` / `AGENTS.md`), which are always loaded.
 
 The rule again: **always-applicable means instructions. Conditionally-applicable means skill.**

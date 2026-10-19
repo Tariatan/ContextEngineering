@@ -23,7 +23,7 @@ Memory holds evolving context ("decided X because Y, revisit when Z"). Instructi
 |---|---|---|
 | Observation | auto-memory | noticed once |
 | Confirmed pattern | memory entry | same correction 2-3 times |
-| Team standard | instruction file (AGENTS.md, CLAUDE.md) | reviewed in a PR, stable for 2 quarters |
+| Team standard | instruction file (AGENTS.md) | reviewed in a PR, stable for 2 quarters |
 
 Promote when: the same correction appeared 3+ times; a review caught a convention the agent should have known; the entry is unchanged for two quarters and reads like a rule; a miss was costly. Steps: identify the rule-like entry, write a more specific instruction ("use `System.Text.Json` for new serialization", not "serialize properly"), delete the memory entry, land both in one reviewable change. Avoid promoting one-off corrections and avoid never promoting.
 

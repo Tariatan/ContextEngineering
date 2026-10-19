@@ -11,23 +11,33 @@ Authoritative sources: [Keep a Changelog](https://keepachangelog.com/) for chang
 
 If the project visibly uses a different changelog format or versioning scheme (e.g. Conventional Commits + auto-generated changelog, calendar versioning), follow that project's own convention instead of forcing Keep a Changelog / SemVer onto it.
 
-## Step 1 — Was CHANGELOG.md touched?
+## Scope
+
+- Use for: every review, regardless of language, to verify a changelog entry and a SemVer bump in a diff.
+- Not for: projects that visibly use another changelog or versioning scheme (follow that scheme); repositories with no changelog history.
+- Prerequisites: the changed-file list, plus `CHANGELOG.md` and the version file at the source and base revisions.
+
+## Instructions
+
+Run Steps 1 to 4 in order, then Reporting. Steps 1 to 3 (changelog) and Step 4 (version bump) fail independently. Expected: a pass or a named failure per step.
+
+### Step 1 — Was CHANGELOG.md touched?
 
 - Check the diff's changed-files list for `CHANGELOG.md` (or `CHANGES.md`/`HISTORY.md`, whichever the repo already uses).
 - Not present → missing changelog entry. Flag it, but still continue with Step 4 (version bump) independently — the two failures are reported separately.
 - If the repository has no changelog file at all and no history of maintaining one, this check does not apply — say nothing.
 
-## Step 2 — Compare source vs target CHANGELOG.md
+### Step 2 — Compare source vs target CHANGELOG.md
 
 - Fetch `CHANGELOG.md` at both the source and target/base revision.
 - Extract the first `##` heading (or the contents of an `## [Unreleased]` section) from each. If they're identical, the top of the file wasn't actually updated (e.g. only older entries changed) → flag as missing.
 
-## Step 3 — Validate the new entry
+### Step 3 — Validate the new entry
 
 - The new entry must use one of the Keep a Changelog categories: `Added`, `Changed`, `Deprecated`, `Removed`, `Fixed`, `Security`.
 - The entry text must describe the actual change in the diff, not be a placeholder or copy of an unrelated entry.
 
-## Step 4 — Version bump
+### Step 4 — Version bump
 
 - Identify the version file(s) for this repo's stack — check for `package.json`, a `.csproj`/`Directory.Build.props` `<Version>`, `Cargo.toml`, `pyproject.toml`, a plain `VERSION` file, or pipeline/config YAML `version:`, depending on what's present.
 - Compare the value at source vs target/base revision.

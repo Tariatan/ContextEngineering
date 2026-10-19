@@ -1,24 +1,34 @@
 ---
 name: check-srp
-description: Checklist for whether a class fulfills a single, well-defined responsibility efficiently and without dead weight — core purpose, efficiency/robustness, and scope creep/redundant code. Used by the reviewer agent to verify adherence and by the class-optimizer agent to actively fix violations.
+description: Checklist for whether a class fulfills a single, well-defined responsibility efficiently and without dead weight — core purpose, efficiency/robustness, and scope creep/redundant code. Used by the reviewer agent to verify adherence and by the class-optimizer agent to actively fix violations. Do not use for whole-change correctness or architecture review (use check-code-quality).
 ---
 
 # Check: Single Responsibility & Class Design
 
 Applies to any class, struct, or otherwise cohesive module meaningfully added or modified in the change under review — not to every file (a config or plain-data change with no real logic doesn't need this).
 
-## Step 1 — Core purpose
+## Scope
+
+- Use for: any class, struct or cohesive module meaningfully added or modified, by the reviewer agent (report) or the class-optimizer agent (fix).
+- Not for: config or plain-data changes with no real logic; whole-change correctness or architecture review (use check-code-quality).
+- Prerequisites: the full source of the class under review.
+
+## Instructions
+
+Run Steps 1 to 3 for each class, then follow Reporting when reviewing or Fixing when invoked to apply changes. Expected: one finding list per class.
+
+### Step 1 — Core purpose
 
 - State the class's single, primary responsibility in one sentence. If you can't, or the sentence needs "and", that's itself an SRP violation — say so.
 - Check the class actually fulfills that purpose completely: are there logical gaps or edge cases it silently fails to handle?
 
-## Step 2 — Efficiency & robustness
+### Step 2 — Efficiency & robustness
 
 - **Complexity** — algorithms, loops, or data structures that could be a simpler or faster shape. Don't chase micro-optimizations outside hot paths, but flag complexity that's out of proportion to what the class does.
 - **Resource management** — I/O, memory, and network calls handled optimally: no redundant queries, streams/handles properly disposed.
 - **Robustness** — error handling that surfaces failures rather than swallowing them silently.
 
-## Step 3 — Scope creep & dead weight
+### Step 3 — Scope creep & dead weight
 
 - **Over-engineering** — is the class solving problems it doesn't actually have yet (speculative generality, unused extension points)?
 - **Redundant code** — unused variables, dead methods, duplicated logic that already exists elsewhere.

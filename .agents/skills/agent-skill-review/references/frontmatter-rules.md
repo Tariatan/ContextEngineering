@@ -238,7 +238,7 @@ State these as unknown when they come up in review. Do not assert either way.
 
 One question that used to sit here is settled: **the Claude harness does not discover
 `.agents/skills/` natively** (roadmap §6.6). The remedy is a symlink `.claude/skills/` →
-`.agents/skills/`, or an explicit reference from `CLAUDE.md`. Do not fail a skill for living in
+`.agents/skills/`. Do not fail a skill for living in
 `.agents/skills/`; check instead that the bridge exists in the consuming repository.
 
 In every case the fallback is the same: move the information out of frontmatter and into the

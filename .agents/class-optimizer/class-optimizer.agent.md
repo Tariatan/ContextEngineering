@@ -1,8 +1,7 @@
 ---
-name: "Class Optimizer"
-description: "Use when asked to optimize, review, or clean up a class for Single Responsibility adherence, efficiency, or dead/redundant code — e.g. 'optimize ClassName', 'is this class doing too much'. Modifies the class directly, unlike the read-only Reviewer agent."
+name: class-optimizer
+description: "Use when asked to optimize, review, or clean up a class for Single Responsibility adherence, efficiency, or dead/redundant code — e.g. 'optimize ClassName', 'is this class doing too much'. Modifies the class directly, unlike the read-only Reviewer agent. Do not use to review a pull request or diff (use reviewer)."
 tools: [read, search, execute, edit]
-model: "Claude Sonnet 4"
 argument-hint: "Name the class to optimize, or point at a file/type"
 ---
 
@@ -19,7 +18,7 @@ Optimize the class or type named by the user, or the one at the given file/locat
 ## Workflow
 
 1. Read the target class in full, along with its immediate callers/usages and any existing tests, so you understand what a change might break.
-2. Run `skills/check-srp/SKILL.md` (Fixing section) against the class to identify Purpose, Efficiency, and Scope issues.
+2. Load the `check-srp` skill and run its Fixing section against the class to identify Purpose, Efficiency, and Scope issues.
 3. Apply the fixes directly: close the gaps found, simplify or resolve the efficiency/robustness issues, and delete dead code or relocate misplaced responsibilities.
 4. Update call sites affected by any method you moved, renamed, or removed, so the code stays consistent.
 5. Run the project's existing build/tests if available, and fix anything your changes broke.

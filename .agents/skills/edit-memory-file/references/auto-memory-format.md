@@ -1,6 +1,6 @@
 # Auto-memory format
 
-For an agent's auto-memory directory (Claude Code: `~/.claude/projects/PROJECT/memory/`). Other agents can adapt the layout. The index holds pointers; each topic file holds one fact.
+For an agent's auto-memory directory. Other agents can adapt the layout. The index holds pointers; each topic file holds one fact.
 
 ## Topic file
 

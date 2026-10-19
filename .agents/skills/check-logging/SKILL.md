@@ -11,6 +11,18 @@ This isn't tied to a specific logging framework or company convention — it's t
 
 Language-specific idioms (e.g. a language's structured-logging API, source-generated logging) are layered on top by the matching language skill — this skill covers the universal checklist only.
 
+## Scope
+
+- Use for: every code review, regardless of language, to judge the log statements a change adds or modifies.
+- Not for: choosing a logging framework or a house convention; correctness or design review (use check-code-quality).
+- Prerequisites: none.
+
+## Instructions
+
+1. **LIST**: Collect every log statement the change adds or alters, with the operation or request path that emits it. Expected: a list per operation.
+2. **CHECK**: Go through each item under What to check for every list entry. Expected: each deviation recorded with file and location.
+3. **REPORT**: Apply the Reporting section. Expected: every finding carries a severity.
+
 ## What to check
 
 - **Log level selection** — does the severity match the situation (Trace/Debug for diagnostics, Info for normal flow, Warning for recoverable anomalies, Error for failures, Critical/Fatal for unrecoverable)? Flag both over- and under-escalation. A rule of thumb: an **expected** situation (e.g. "not enough input to start this operation") is Information, not a Warning or Error just because it's a failure path — reserve Warning/Error for genuinely **unexpected** situations.

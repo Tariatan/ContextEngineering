@@ -9,6 +9,18 @@ This skill is activated when the reviewer agent encounters Rust code. It refines
 
 The guidance below is general Rust community practice — the official Rust API Guidelines, the reasoning behind widely-used crates, and idioms enforced by `rustfmt`/`clippy` — not tied to any specific company or codebase. Always follow the repository's own conventions (its `rustfmt.toml`, `clippy.toml`, or a documented style guide) when they specify something different.
 
+## Scope
+
+- Use for: reviewing Rust changes, as the language step of the reviewer agent.
+- Not for: other languages; logging (use check-logging); general design review (use check-code-quality).
+- Prerequisites: none. The repository's own `rustfmt.toml`, `clippy.toml` and style guide win when they differ.
+
+## Instructions
+
+1. **CONVENTIONS**: Read the repository's `rustfmt.toml`, `clippy.toml` and style guide when present. Expected: the list of rules that override the guidance below.
+2. **CHECK**: Walk Naming, Best Practices, Error Handling and Async and Concurrency against the change. For `Drop`, handles or cleanup paths read `references/resource-management.md`; for traits, generics or `dyn` read `references/dispatch-and-structure.md`; when tests are added or edited read `references/unit-tests.md`. Expected: findings with file and location.
+3. **REPORT**: Map each finding to the reviewer agent's priorities. Expected: a severity per finding.
+
 ## Naming
 
 Follow the [Rust API Guidelines](https://rust-lang.github.io/api-guidelines/naming.html) casing conventions (originally RFC 430):
@@ -44,20 +56,7 @@ Avoid:
 - Never return an opaque/type-erased error from an API callers are expected to `match`/`if let` on — that erases exactly the information they need. Return the typed error instead.
 - A typed error that implements `std::error::Error` converts into an opaque error automatically via `?`, so the two compose cleanly: typed at the boundary that must react, opaque above it.
 
-```rust
-#[derive(Debug, thiserror::Error)]
-pub enum SensorError {
-    #[error("communication timeout after {timeout_ms} ms")]
-    Timeout { timeout_ms: u64 },
-    #[error("I/O error")]
-    Io(#[from] std::io::Error),
-}
-
-fn run() -> anyhow::Result<()> {
-    let temperature = read_sensor().context("failed to read temperature sensor")?; // SensorError -> anyhow::Error
-    Ok(())
-}
-```
+A worked example (a typed `SensorError` converted into `anyhow::Error` through `?`) is in `references/error-handling-example.md`. Read it when a finding needs to explain the typed-versus-opaque split.
 
 ## Async and Concurrency
 
@@ -71,28 +70,3 @@ Pay particular attention to:
 - prefer a read-write lock over a plain mutex when reads significantly outnumber writes
 - cancellation safety — what state does a future leave behind if it's dropped mid-`.await`?
 - proper error propagation with `?`
-
-## Resource Management
-
-Check:
-
-- `Drop` implementations — correct, and never panicking inside `drop()`
-- RAII patterns used for guaranteed cleanup instead of "remember to call `close()`"
-- proper cleanup in error paths (not just the happy path)
-- file handle and connection lifetime, and that it's obvious from the type who owns them
-
-## Dispatch and Structure
-
-- Prefer static dispatch (generics/`impl Trait`) on hot paths, where monomorphization and inlining matter; reach for dynamic dispatch (`dyn Trait`) when you genuinely need a heterogeneous collection or a plugin-style boundary, and accept the small indirection cost there.
-- Keep a type's inherent `impl` block(s) near its definition; group trait implementations logically rather than scattering them across the file.
-- Run `cargo fmt` and `cargo clippy` (ideally `-D warnings` in CI) as a baseline — don't spend review time on things a formatter/linter would already catch; instead flag `#[allow(clippy::...)]` that lacks a comment explaining why the lint doesn't apply.
-
-## Unit Tests
-
-Verify:
-
-- unit tests live in a `#[cfg(test)] mod tests` block next to the code they test (`src/`); tests that exercise the crate's public API end-to-end belong in the separate `tests/` integration-test directory — don't blur the two.
-- `#[cfg(test)]` (or a dedicated Cargo feature for more advanced mock/integration setups) is the default way to swap a real dependency for a test double — it's zero-cost (the test-only code doesn't exist in the release build) and doesn't require a runtime DI container. Reach for trait-object dependency injection only when the code genuinely needs to swap the implementation at runtime, not just in tests.
-- meaningful assertions
-- proper use of `#[should_panic]` vs. a `Result`-returning test (prefer the latter — a `Result`-returning test still reports *why* it failed)
-- naming convention consistent with the codebase

@@ -30,7 +30,7 @@ The chapter defines **seven** context primitives (roadmap §6.2). A skill is one
 
 | Format | Correct when | Why |
 |---|---|---|
-| **Instruction file** (`AGENTS.md`, `copilot-instructions.md`, `CLAUDE.md`) | conventions for working inside a repository — code style, build command, branch naming, threading rules | always loaded for the matching scope; no triggering risk; no maintenance surface |
+| **Instruction file** (`AGENTS.md`, `copilot-instructions.md`) | conventions for working inside a repository — code style, build command, branch naming, threading rules | always loaded for the matching scope; no triggering risk; no maintenance surface |
 | **Skill** | how an external consumer uses a shared library, or a detailed multi-step conditional procedure the agent should load *only when relevant* | progressive disclosure earns its keep |
 | **Agent configuration** | a different persona, model or tool allow-list is needed for a whole class of work | skills cannot change the agent's identity |
 | **Prompt file / slash command** | a repeatable process the human invokes by name every time | no triggering logic needed at all |

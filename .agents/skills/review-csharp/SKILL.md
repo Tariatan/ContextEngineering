@@ -9,6 +9,18 @@ This skill is activated when the reviewer agent encounters C# or .NET code. It r
 
 The guidance below is general, widely-recognized C# practice (informed by the .NET runtime's own analyzer rules, the Roslyn/StyleCop defaults, and common idioms) — not tied to any specific company or codebase. Always follow the repository's own coding guidelines (`.editorconfig`, `Directory.Build.props`, a documented style guide) when they specify something different.
 
+## Scope
+
+- Use for: reviewing C# or .NET changes, as the language step of the reviewer agent.
+- Not for: other languages; logging (use check-logging); general design review (use check-code-quality).
+- Prerequisites: none. The repository's own `.editorconfig` and style guide win when they differ.
+
+## Instructions
+
+1. **CONVENTIONS**: Read the repository's `.editorconfig`, `Directory.Build.props` and style guide when present. Expected: the list of rules that override the guidance below.
+2. **CHECK**: Walk Best Practices, Async and Concurrency and Resource Management against the change. For new types or public APIs read `references/design.md`; when tests are added or edited read `references/unit-tests.md`. Expected: findings with file and location.
+3. **REPORT**: Map each finding to the reviewer agent's priorities. Expected: a severity per finding.
+
 ## Best Practices
 
 Prefer:
@@ -64,17 +76,3 @@ Check:
 
 Resources should always have a clear owner responsible for disposing them.
 
-## Design
-
-- Avoid cyclic dependencies between types, namespaces, and assemblies — even an indirect cycle (A → B → C → A) is a design smell worth flagging, not just a direct one.
-- Use documentation comments (`///`) on public types and members; keep `<inheritdoc/>` for interface implementations and overrides rather than re-stating the same summary.
-
-## Unit Tests
-
-Verify:
-
-- Arrange / Act / Assert structure (comments marking each section are a cheap, high-value readability aid)
-- meaningful assertions (not just "doesn't throw")
-- proper mocking — mock only what you don't own or what's genuinely expensive/nondeterministic
-- naming convention: `MethodUnderTest_Scenario_ExpectedOutcome`
-- if the codebase already names mock fields `[nameOfMockedThing]Mock`, follow that convention for new tests rather than introducing a different one

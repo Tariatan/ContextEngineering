@@ -1,13 +1,18 @@
 ---
 name: review-rust
 description: Provides best practices and guidelines for Rust code regarding naming, ownership/borrowing, error handling, Send/Sync and async lock-across-await hazards, Drop/RAII cleanup, dispatch, and unit test conventions. Use when reviewing Rust changes.
+metadata:
+  version: 1.0.0
+  status: active
+  last-reviewed: 2026-10-22
+  risk: low
 ---
 
 # Review: Rust
 
 This skill is activated when the reviewer agent encounters Rust code. It refines (but does not contradict) the universal review principles defined in the reviewer agent.
 
-The guidance below is general Rust community practice — the official Rust API Guidelines, the reasoning behind widely-used crates, and idioms enforced by `rustfmt`/`clippy` — not tied to any specific company or codebase. Always follow the repository's own conventions (its `rustfmt.toml`, `clippy.toml`, or a documented style guide) when they specify something different.
+The guidance below is general Rust community practice - the official Rust API Guidelines, the reasoning behind widely-used crates, and idioms enforced by `rustfmt`/`clippy` - not tied to any specific company or codebase. Always follow the repository's own conventions (its `rustfmt.toml`, `clippy.toml`, or a documented style guide) when they specify something different.
 
 ## Scope
 
@@ -44,16 +49,16 @@ Prefer:
 
 Avoid:
 
-- unnecessary `unwrap()`/`expect()` in library code — prefer propagating a `Result`; reserve `unwrap()`/`expect()` for cases the code has already proven can't fail, and prefer `expect()` with a message explaining why
+- unnecessary `unwrap()`/`expect()` in library code - prefer propagating a `Result`; reserve `unwrap()`/`expect()` for cases the code has already proven can't fail, and prefer `expect()` with a message explaining why
 - unnecessary `clone()` or `Arc` where a borrow would suffice
 - `unsafe` without a `// SAFETY:` comment explaining which invariant the caller/implementation is upholding
 - overly broad trait bounds (bound on exactly what the function body uses, not "whatever might be convenient later")
 
 ## Error Handling
 
-- Use a typed, matchable error (e.g. via the `thiserror` crate) at any boundary where a caller needs to inspect or react differently per failure — a public crate API, or an internal module interface with distinct handling per variant.
+- Use a typed, matchable error (e.g. via the `thiserror` crate) at any boundary where a caller needs to inspect or react differently per failure - a public crate API, or an internal module interface with distinct handling per variant.
 - Use an opaque, propagation-only error (e.g. via the `anyhow` crate, with `.context()`/`.with_context()` to attach information as it propagates) for code whose only job is to bubble the error up to a logging/reporting boundary (`main`, a CLI handler, a test helper).
-- Never return an opaque/type-erased error from an API callers are expected to `match`/`if let` on — that erases exactly the information they need. Return the typed error instead.
+- Never return an opaque/type-erased error from an API callers are expected to `match`/`if let` on - that erases exactly the information they need. Return the typed error instead.
 - A typed error that implements `std::error::Error` converts into an opaque error automatically via `?`, so the two compose cleanly: typed at the boundary that must react, opaque above it.
 
 A worked example (a typed `SensorError` converted into `anyhow::Error` through `?`) is in `references/error-handling-example.md`. Read it when a finding needs to explain the typed-versus-opaque split.
@@ -65,8 +70,8 @@ Pay particular attention to:
 - `Send`/`Sync` bounds on anything crossing a thread or task boundary
 - proper use of async runtime primitives
 - deadlocks from holding a lock across an `.await` point
-- for synchronous, short-held locks (even inside async code), a non-poisoning lock (e.g. `parking_lot::Mutex`/`RwLock`) is usually a better fit than `std::sync` — a panic while holding a `std::sync` lock poisons it for every future user, which is rarely what you want
-- switch to an async-aware lock (e.g. `tokio::sync::Mutex`/`RwLock`) only when the lock genuinely must be held across an `.await`; never call a blocking variant of it (e.g. `blocking_lock()`) from inside an async task — it blocks the executor thread and risks starvation/deadlock
+- for synchronous, short-held locks (even inside async code), a non-poisoning lock (e.g. `parking_lot::Mutex`/`RwLock`) is usually a better fit than `std::sync` - a panic while holding a `std::sync` lock poisons it for every future user, which is rarely what you want
+- switch to an async-aware lock (e.g. `tokio::sync::Mutex`/`RwLock`) only when the lock genuinely must be held across an `.await`; never call a blocking variant of it (e.g. `blocking_lock()`) from inside an async task - it blocks the executor thread and risks starvation/deadlock
 - prefer a read-write lock over a plain mutex when reads significantly outnumber writes
-- cancellation safety — what state does a future leave behind if it's dropped mid-`.await`?
+- cancellation safety - what state does a future leave behind if it's dropped mid-`.await`?
 - proper error propagation with `?`

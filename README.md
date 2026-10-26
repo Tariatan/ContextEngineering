@@ -22,6 +22,8 @@ Skills refine an agent's behavior for a specific language or concern. They are r
 - `.agents/skills/check-code-quality/SKILL.md` - correctness, security, architecture, dependency and design-complexity checklist; referenced by Reviewer, and usable by an implementing agent while it writes code.
 - `.agents/skills/skill-creator/SKILL.md` - authors, extracts or updates a `SKILL.md` per the skill authoring guide and template; standalone, not referenced by an agent.
 - `.agents/skills/writing-for-agents/SKILL.md` - reference for writing any document an agent consumes (skills, `AGENTS.md` / `CLAUDE.md`, pointed-at docs): context pointers, information hierarchy, completion criteria, leading words, with skill mechanics and pruning in its `references/`; adapted from an MIT-licensed upstream (credit in its `metadata`); standalone, not referenced by an agent.
+- `.agents/skills/grilling/SKILL.md` - relentless interview in rounds of numbered questions with recommended answers, until every branch of a plan's design tree is resolved; usable inside other skills; adapted from an MIT-licensed upstream (credit in its `metadata`).
+- `.agents/skills/grill-me/SKILL.md` - named entry point that starts a `grilling` session; requires `grilling` installed beside it; adapted from the same upstream.
 - `.agents/skills/review-csharp/SKILL.md` — C# / .NET review guidelines.
 - `.agents/skills/review-rust/SKILL.md` — Rust review guidelines.
 

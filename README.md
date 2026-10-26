@@ -24,6 +24,7 @@ Skills refine an agent's behavior for a specific language or concern. They are r
 - `.agents/skills/writing-for-agents/SKILL.md` - reference for writing any document an agent consumes (skills, `AGENTS.md` / `CLAUDE.md`, pointed-at docs): context pointers, information hierarchy, completion criteria, leading words, with skill mechanics and pruning in its `references/`; adapted from an MIT-licensed upstream (credit in its `metadata`); standalone, not referenced by an agent.
 - `.agents/skills/grilling/SKILL.md` - relentless interview in rounds of numbered questions with recommended answers, until every branch of a plan's design tree is resolved; usable inside other skills; adapted from an MIT-licensed upstream (credit in its `metadata`).
 - `.agents/skills/grill-me/SKILL.md` - named entry point that starts a `grilling` session; requires `grilling` installed beside it; adapted from the same upstream.
+- `.agents/skills/teach/SKILL.md` - multi-session teaching in the current directory as a stateful workspace (mission, lessons, reference sheets, learning records), with pedagogy, record keeping and the four file formats in its `references/`; adapted from the same MIT-licensed upstream.
 - `.agents/skills/review-csharp/SKILL.md` — C# / .NET review guidelines.
 - `.agents/skills/review-rust/SKILL.md` — Rust review guidelines.
 

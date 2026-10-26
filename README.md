@@ -25,6 +25,8 @@ Skills refine an agent's behavior for a specific language or concern. They are r
 - `.agents/skills/grilling/SKILL.md` - relentless interview in rounds of numbered questions with recommended answers, until every branch of a plan's design tree is resolved; usable inside other skills; adapted from an MIT-licensed upstream (credit in its `metadata`).
 - `.agents/skills/grill-me/SKILL.md` - named entry point that starts a `grilling` session; requires `grilling` installed beside it; adapted from the same upstream.
 - `.agents/skills/teach/SKILL.md` - multi-session teaching in the current directory as a stateful workspace (mission, lessons, reference sheets, learning records), with pedagogy, record keeping and the four file formats in its `references/`; adapted from the same MIT-licensed upstream.
+- `.agents/skills/codebase-design/SKILL.md` - deep-module vocabulary (module, interface, depth, seam, adapter, leverage, locality) and principles, with testability, deepening and design-it-twice procedures in its `references/`; adapted from the same MIT-licensed upstream. Overlaps `check-code-quality` on design complexity and defers to it for reviews.
+- `.agents/skills/domain-modeling/SKILL.md` - actively builds a project's domain model: challenges terms, stress-tests with scenarios, keeps `GLOSSARY.md` and ADRs current; file layout and the glossary and ADR formats in its `references/`; adapted from the same MIT-licensed upstream, and used by `codebase-design` for its `GLOSSARY.md` pointer.
 - `.agents/skills/review-csharp/SKILL.md` — C# / .NET review guidelines.
 - `.agents/skills/review-rust/SKILL.md` — Rust review guidelines.
 

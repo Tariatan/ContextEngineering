@@ -2,7 +2,7 @@
 name: writing-for-agents
 description: Reference for writing any document an agent consumes - a skill, an AGENTS.md or CLAUDE.md, a doc reached by a pointer. Use when the user says "write a skill", "tighten this SKILL.md", "edit my AGENTS.md", "the agent ignores this instruction", or when creating or editing a SKILL.md, AGENTS.md or CLAUDE.md. Do not use for scaffolding a new SKILL.md (use skill-creator) or for grading a finished skill against the template (use agent-skill-review).
 metadata:
-  version: 1.0.0
+  version: 1.0.1
   status: active
   last-reviewed: 2026-10-26
   risk: low
@@ -87,4 +87,4 @@ Hunt for opportunities to refactor with leading words. A triad spelled out at th
 
 You win twice: fewer tokens, and a sharper hook for the agent to hang its thinking on. Assume every document is carrying restatements that leading words retire. Go find them.
 
-**Negation** is the failure mode beside this lever: steering by prohibition drags the forbidden behaviour into context and makes it _more_ available. _Don't think of an elephant_, and the elephant is all there is; the negation is a weak modifier the strongly-activated concept overruns, so the ban half-reads as an instruction to do the thing. Prompt the **positive**: state the target behaviour ("write one-line comments") so the banned one is never spoken. A prohibition earns its place only as a hard guardrail you cannot phrase positively; even then, pair it with the positive target so attention lands on what to do.
+**Negation** is the failure mode beside this lever: a bare prohibition drags the forbidden behaviour into context and makes it _more_ available. _Don't think of an elephant_, and the elephant is all there is; the negation is a weak modifier the strongly-activated concept overruns, so the ban half-reads as an instruction to do the thing. The cure is concreteness. Write a prohibition as "Do NOT X" naming the exact forbidden thing, give the reason in one clause, and pair it with the positive target ("write one-line comments") so attention lands on what to do. In a steering file, order prohibitions first: they carry the highest cost of violation.

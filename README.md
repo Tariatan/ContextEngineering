@@ -27,6 +27,7 @@ Skills refine an agent's behavior for a specific language or concern. They are r
 - `.agents/skills/teach/SKILL.md` - multi-session teaching in the current directory as a stateful workspace (mission, lessons, reference sheets, learning records), with pedagogy, record keeping and the four file formats in its `references/`; adapted from the same MIT-licensed upstream.
 - `.agents/skills/codebase-design/SKILL.md` - deep-module vocabulary (module, interface, depth, seam, adapter, leverage, locality) and principles, with testability, deepening and design-it-twice procedures in its `references/`; adapted from the same MIT-licensed upstream. Overlaps `check-code-quality` on design complexity and defers to it for reviews.
 - `.agents/skills/domain-modeling/SKILL.md` - actively builds a project's domain model: challenges terms, stress-tests with scenarios, keeps `GLOSSARY.md` and ADRs current; file layout and the glossary and ADR formats in its `references/`; adapted from the same MIT-licensed upstream, and used by `codebase-design` for its `GLOSSARY.md` pointer.
+- `.agents/skills/retro/SKILL.md` - retrospective on a coding session that proposes environment improvements (navigation pointers, automated checks, coding standards, steering files, tooling, information access) and edits nothing until the user picks; requires `writing-for-agents`; adapted from the same MIT-licensed upstream.
 - `.agents/skills/review-csharp/SKILL.md` — C# / .NET review guidelines.
 - `.agents/skills/review-rust/SKILL.md` — Rust review guidelines.
 

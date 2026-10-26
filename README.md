@@ -21,6 +21,7 @@ Skills refine an agent's behavior for a specific language or concern. They are r
 - `.agents/skills/agent-skill-review/SKILL.md` - reviews a skill folder against the SKILL.md template (frontmatter, body and scope rules in its `references/`) and reports blockers, warnings and advisories with a PASS or FAIL verdict; standalone, not referenced by an agent.
 - `.agents/skills/check-code-quality/SKILL.md` - correctness, security, architecture, dependency and design-complexity checklist; referenced by Reviewer, and usable by an implementing agent while it writes code.
 - `.agents/skills/skill-creator/SKILL.md` - authors, extracts or updates a `SKILL.md` per the skill authoring guide and template; standalone, not referenced by an agent.
+- `.agents/skills/writing-for-agents/SKILL.md` - reference for writing any document an agent consumes (skills, `AGENTS.md` / `CLAUDE.md`, pointed-at docs): context pointers, information hierarchy, completion criteria, leading words, with skill mechanics and pruning in its `references/`; adapted from an MIT-licensed upstream (credit in its `metadata`); standalone, not referenced by an agent.
 - `.agents/skills/review-csharp/SKILL.md` — C# / .NET review guidelines.
 - `.agents/skills/review-rust/SKILL.md` — Rust review guidelines.
 

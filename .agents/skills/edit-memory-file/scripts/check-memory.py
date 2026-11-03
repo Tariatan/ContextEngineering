@@ -63,6 +63,12 @@ def main(argv):
         # Top-level bullets must be index lines or start with a YYYY-MM date
         if line.startswith("- ") and not re.match(r"- (\[|\d{4}-\d{2})", line):
             problems.append("UNDATED: line %d: %s" % (num, line[:60]))
+        # Dated entries not confirmed for over 6 months, unless marked [stable]
+        stamp = re.match(r"- (\d{4})-(\d{2})\b", line)
+        if stamp and "[stable]" not in line:
+            age = (today.year - int(stamp.group(1))) * 12 + today.month - int(stamp.group(2))
+            if age > 6:
+                problems.append("AGED: line %d (%s-%s, %d months)" % (num, stamp.group(1), stamp.group(2), age))
 
     # Relative links must resolve
     for target in sorted(set(re.findall(r"\]\(([^)#\s]+)", text))):

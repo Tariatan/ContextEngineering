@@ -4,7 +4,7 @@ Memory-management strategies for agent memory files. Most tools load only the fi
 
 ## Strategy 1: Tiers (active, archive, retired)
 
-- **Active** (`memory.md` or `MEMORY.md`): context from the last 6 months that is still relevant. At most 100 lines. Starts with a pointer such as `> Older decisions: see [memory-archive.md](./memory-archive.md)`.
+- **Active** (`memory.md` or `MEMORY.md`): context confirmed in the last 6 months that is still relevant. An entry's date is its last confirmation; `memory-lifecycle.md` lists the validity checks that retire an entry sooner. At most 100 lines. Starts with a pointer such as `> Older decisions: see [memory-archive.md](./memory-archive.md)`.
 - **Archive** (`memory-archive.md`): decisions 6-18 months old that a specific task might need. Linked, never auto-loaded.
 - **Retired**: superseded or irrelevant entries older than 18 months. Delete them; git history keeps them.
 
@@ -23,7 +23,7 @@ Memory holds evolving context ("decided X because Y, revisit when Z"). Instructi
 |---|---|---|
 | Observation | auto-memory | noticed once |
 | Confirmed pattern | memory entry | same correction 2-3 times |
-| Team standard | instruction file (AGENTS.md) | reviewed in a PR, stable for 2 quarters |
+| Team standard | instruction file (AGENTS.md, CLAUDE.md) | reviewed in a PR, stable for 2 quarters |
 
 Promote when: the same correction appeared 3+ times; a review caught a convention the agent should have known; the entry is unchanged for two quarters and reads like a rule; a miss was costly. Steps: identify the rule-like entry, write a more specific instruction ("use `System.Text.Json` for new serialization", not "serialize properly"), delete the memory entry, land both in one reviewable change. Avoid promoting one-off corrections and avoid never promoting.
 

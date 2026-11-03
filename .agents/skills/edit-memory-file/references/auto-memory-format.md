@@ -1,6 +1,6 @@
 # Auto-memory format
 
-For an agent's auto-memory directory. Other agents can adapt the layout. The index holds pointers; each topic file holds one fact.
+For an agent's auto-memory directory (Claude Code: `~/.claude/projects/PROJECT/memory/`). Other agents can adapt the layout. The index holds pointers; each topic file holds one fact.
 
 ## Topic file
 
@@ -24,6 +24,7 @@ The fact.
 - Convert relative dates to absolute dates.
 - Link related memories with `[[other-name]]`, using that file's `name:` slug.
 - Split a file once it covers two independent facts.
+- Update a changed fact in its existing file and keep `description` and the index hook true to the new text. Delete the file once the fact is false or moot.
 
 ## Index line
 
